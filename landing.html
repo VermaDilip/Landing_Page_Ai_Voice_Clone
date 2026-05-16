@@ -763,7 +763,106 @@
 <button class="w-full py-4 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-all">Contact Sales</button>
 </div>
 </div>
-</div>
+    </div>
+</section>
+<!-- FAQ Section -->
+<section class="py-24 container mx-auto px-6" id="faq">
+    <div class="text-center mb-16 reveal">
+        <h2 class="text-4xl font-headline font-bold mb-4">Frequently Asked Questions</h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Everything you need to know about AI voice cloning. Can&apos;t find the answer you&apos;re looking for? Reach out to us.</p>
+    </div>
+    <div class="max-w-4xl mx-auto space-y-4">
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-1">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>What is AI voice cloning and how does it work?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">AI voice cloning uses deep neural networks to analyze and replicate the unique acoustic characteristics of a human voice from a short audio sample. The model learns pitch, tone, cadence, and emotional nuance to recreate natural-sounding speech from any text input.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-2">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>Are there any quality free AI voice cloning tools available?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">Yes, AI Voice Lab offers a free plan with 100 monthly credits, giving you access to our core voice library and standard features, allowing you to test and experience AI voice cloning at no cost.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-3">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>How do I use an AI voice cloning tool?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">Simply sign up, choose a voice from the library, or upload your own sample for custom cloning. Type or paste your text into the editor, adjust voice parameters if desired, and click generate to produce high-quality speech audio.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-4">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>What is the difference between instant and professional voice cloning?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">Instant cloning requires only a few seconds of audio and produces great results quickly. Professional cloning uses a longer training process with higher-quality audio, delivering superior fidelity and consistency for demanding production needs.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-1">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>How secure is AI voice cloning technology?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">We employ enterprise-grade encryption, secure data storage, and strict access controls. All voice data and generated audio are handled in compliance with industry standards and privacy regulations to ensure complete security.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-2">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>Is AI voice cloning legal for creating audio content?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">Yes, AI voice cloning is legal for content you own or have explicit permission to use. Always ensure you have the necessary rights and consents before cloning or using any voice. We provide commercial usage rights with Pro and Enterprise plans.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-3">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>Can AI voice cloning be used to mimic any voice?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">Our models can accurately clone a wide range of voices with sufficient high-quality audio. For best results, we recommend using clear recordings of 30 seconds or longer per speaker. Extremely distorted or heavily processed audio may reduce accuracy.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-4">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>How much audio do I need for high-quality voice cloning?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">For instant cloning, as little as 1-2 minutes of clear audio is sufficient. For professional-grade cloning, 30+ minutes of studio-quality audio is recommended to capture the full vocal range and nuances.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-1">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>Which languages does AI voice cloning support?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">AI Voice Lab supports 100+ languages with native-level accent accuracy, including English, Spanish, French, German, Japanese, Mandarin, Hindi, and many more — consistently expanding our global coverage.</p>
+            </div>
+        </div>
+        <div class="glass-panel rounded-2xl overflow-hidden reveal stagger-2">
+            <button class="w-full px-8 py-6 flex items-center justify-between text-left text-lg font-bold text-white hover:bg-white/[0.03] transition-all faq-toggle" onclick="toggleFaq(this)">
+                <span>Can AI voice cloning be used for creating realistic voiceovers?</span>
+                <span class="material-symbols-outlined text-tertiary faq-icon">expand_more</span>
+            </button>
+            <div class="faq-content hidden px-8 pb-6">
+                <p class="text-slate-400 leading-relaxed">Absolutely. AI voice cloning is widely used for audiobooks, YouTube narration, corporate training videos, podcasts, commercials, and game dialogues — producing studio-quality voiceovers at a fraction of traditional recording costs.</p>
+            </div>
+        </div>
+    </div>
 </section>
 <!-- Footer -->
 <footer class="py-12 border-t border-white/5 reveal">
@@ -880,5 +979,20 @@
             });
         });
     });
+
+    // FAQ Accordion toggle
+    function toggleFaq(button) {
+        const wrapper = button.parentElement;
+        const content = wrapper.querySelector('.faq-content');
+        const icon = button.querySelector('.faq-icon');
+
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            icon.style.transform = 'rotate(180deg)';
+        } else {
+            content.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+        }
+    }
 </script>
 </body></html>
