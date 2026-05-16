@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Voice Clone | AI Voice Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#004f53",
+                        "outline-variant": "#4a4455",
+                        "on-primary-fixed-variant": "#5a00c6",
+                        "on-secondary-fixed": "#001a42",
+                        "surface-variant": "#313540",
+                        "tertiary": "#00dce5",
+                        "on-error": "#690005",
+                        "on-primary": "#3f008e",
+                        "secondary-container": "#0566d9",
+                        "surface-container-highest": "#313540",
+                        "on-surface-variant": "#ccc3d8",
+                        "surface-container-lowest": "#0a0e18",
+                        "surface-container-low": "#171b26",
+                        "surface-container": "#1c1f2a",
+                        "on-tertiary": "#003739",
+                        "background": "#0f131d",
+                        "error-container": "#93000a",
+                        "secondary": "#adc6ff",
+                        "surface-container-high": "#262a35",
+                        "primary": "#d2bbff",
+                        "on-surface": "#dfe2f1",
+                        "on-tertiary-fixed": "#002021",
+                        "surface-bright": "#353944",
+                        "outline": "#958da1",
+                        "on-primary-container": "#ede0ff",
+                        "primary-container": "#7c3aed",
+                        "on-secondary-container": "#e6ecff",
+                        "primary-fixed-dim": "#d2bbff",
+                        "on-secondary": "#002e6a",
+                        "inverse-primary": "#732ee4",
+                        "tertiary-container": "#007277",
+                        "on-secondary-fixed-variant": "#004395",
+                        "tertiary-fixed": "#63f7ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "inverse-on-surface": "#2c303b",
+                        "primary-fixed": "#eaddff",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#25005a",
+                        "on-background": "#dfe2f1",
+                        "surface-dim": "#0f131d",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#00dce5",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "surface-tint": "#d2bbff",
+                        "on-tertiary-container": "#7cf8ff",
+                        "inverse-surface": "#dfe2f1",
+                        "surface": "#0f131d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #d2bbff 0%, #00dce5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .ethereal-glow {
+            box-shadow: 0 0 40px -10px rgba(124, 58, 237, 0.3);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f131d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #313540;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c3aed;
+        }
+        .avatar-float {
+            animation: float 10s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(var(--rot)); }
+            50% { transform: translateY(-20px) rotate(var(--rot)); }
+        }
+
+        /* Entrance Animations Styles */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal-pop {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .active-reveal {
+            opacity: 1;
+            transform: translate(0) scale(1);
+        }
+
+        .stagger-1 { transition-delay: 100ms; }
+        .stagger-2 { transition-delay: 200ms; }
+        .stagger-3 { transition-delay: 300ms; }
+        .stagger-4 { transition-delay: 400ms; }
+
+        /* Initial Hero Load Animation */
+        .hero-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: heroFadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @keyframes heroFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-delay-1 { animation-delay: 200ms; }
+        .hero-delay-2 { animation-delay: 400ms; }
+        .hero-delay-3 { animation-delay: 600ms; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-slate-950/40 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-8 h-20 shadow-2xl shadow-black/40">
+<div class="text-2xl font-bold tracking-tighter text-white font-headline">
+        AI Voice Clone
+    </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-violet-400 font-bold border-b-2 border-violet-500 pb-1 font-headline tracking-tight" href="#">Features</a>
+<a class="text-slate-400 hover:text-white transition-colors font-headline tracking-tight" href="#">Pricing</a>
+<a class="text-slate-400 hover:text-white transition-colors font-headline tracking-tight" href="#">Showcase</a>
+</div>
+<div class="flex items-center gap-4">
+<!-- <button class="px-5 py-2 text-slate-400 hover:text-white transition-all duration-300 font-headline tracking-tight">Login</button> -->
+ <a href="http://localhost:5173/login"
+   class="px-5 py-2 text-slate-400 hover:text-white transition-all duration-300 font-headline tracking-tight">
+   Login
+</a>
+<button class="px-6 py-2 bg-gradient-to-r from-primary-container to-secondary-container text-white font-bold rounded-xl scale-95 active:scale-90 transition-all font-headline tracking-tight">Get Started</button>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" id="hero">
+<!-- Background Elements & Avatar Gallery -->
+<div class="absolute inset-0 z-0">
+<div class="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-tertiary/10 rounded-full blur-[120px]"></div>
+<!-- Floating Avatar Background Gallery -->
+<div class="absolute inset-0 overflow-hidden">
+<!-- Left Side Avatars -->
+<div class="absolute top-[10%] left-[5%] w-32 h-32 rounded-2xl glass-panel p-1 opacity-30 blur-[2px] avatar-float hidden lg:block" data-parallax="0.05" style="--rot: -12deg;">
+<img alt="Avatar 1" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJjhwZdpZWnJwYBrBhGvJnPBUWg67T9H8B5fEF_gl22sSBrYDz52rk0qOkthD7dABHJLW2qHWOP87u4QOR-NIszJ3DUzx-XOpf_N7XkiBDG1AsXExvIlBTHLM0-ReCLO95GwXzycQSiaW-ETk-Rt_sch0HSeCXnpJRl_Y5DggrZEAOy-39N5RZH3by-o_WqxniDW--v8G-j5Und5yc678qV34Zdz1vHTjD4mRSKB8qfj48UMq_2e_oF2MKe_pHSxo60TsQ64CT8hCZ"/>
+</div>
+<div class="absolute top-[40%] left-[2%] w-40 h-40 rounded-2xl glass-panel p-1 opacity-20 blur-[4px] avatar-float hidden lg:block" data-parallax="0.08" style="--rot: 8deg; animation-delay: 2s;">
+<img alt="Avatar 2" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxJwUlZ61Ncs7TOhHfy1UbUaQhmtEXBV6DBwzW1hR68lGGOWGQtl1Q_jR0wYlCD1XVnM9M7S4oSNlCeNZFXbihDJVJ-bhrzDbfZCvS4I08DQ11Tfajqi3LkRFkYHgzGXc6h8cEslHnM6yfBvGVPvpIOsJxUHMjwU7NvZ3do4x1XODU3ObxQlHdY82JAJ80p62z0OQD548BDhsRHEZpSE2-CaB_xmnWqRcskk2ADQSt6ORSa0DW_qpppVGnZ4az9rQe5ZqfaQHngux"/>
+</div>
+<div class="absolute bottom-[10%] left-[12%] w-36 h-36 rounded-2xl glass-panel p-1 opacity-40 blur-[1px] avatar-float hidden lg:block" data-parallax="0.03" style="--rot: -5deg; animation-delay: 1s;">
+<img alt="Avatar 3" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWTm9lFJG50PjrcXzPSGp0XcAZN9xE7uRezu4cM1WHHHaefMmYlxaYzC11YZPn0oTt523PKLu8Up8UZ1jc5ksf93mf5x2Vg3WrF2q5Mg68aUBB7IMMmvn665SKRMQxmHpGfFS9unKz1gZ4fqQIelp03Ku3yeHWplPQbZBqpdC0u1EzX-c7rEtEPV5CoOnII1mi5kPUXk32nr7NBoNQsxzrrEEvOcUm5EDcgB6xl-vjXXXU_sWds-yip3mqZCSOpVUmsZDtT576kM1y"/>
+</div>
+<!-- Right Side Avatars -->
+<div class="absolute top-[15%] right-[8%] w-44 h-44 rounded-2xl glass-panel p-1 opacity-30 blur-[2px] avatar-float hidden lg:block" data-parallax="0.06" style="--rot: 15deg; animation-delay: 3s;">
+<img alt="Avatar 4" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwndS5cZVb8ShO1EqRwr-RJ43hqkkq0FCWNLxp-4bl8xscvyy6pmgyl_JQtJRwg5XWCqOXSJiG9kONDulREED_m0FZb1U_zhen255-Ffum_LNoIMrSQfWoQ7vhR3YPbReAzsxJeNBA8r4AcbVnAGYkP65IUsPAeJCilU5JQXhEVZzx1IepRgPOqtdoQZC7E1otKdFmM-mxDs5IVl1Po38ytrymfTni41O5Gv7CtjLESoEn229oFTJ37_bOFno8le2q1lzw3iYPLP_6"/>
+</div>
+<div class="absolute top-[45%] right-[10%] w-32 h-32 rounded-2xl glass-panel p-1 opacity-50 blur-[0px] avatar-float hidden lg:block" data-parallax="0.1" style="--rot: -10deg; animation-delay: 0.5s;">
+<img alt="Avatar 5" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe2P7PO4ENUGBMeF4eby4WS7M3bYz8wWIdipejZvFKrfNS8W9unVEoR3emZcLAqMnsCY-ciKn2uhdwTFmtwZ_EZNyjENJab0owlZBZtBNmjqzG5n3d4oOhi7E3pG4kYkS5JCZVihjqd_Z0mt9it9tmZYhBZqo0YBItIvHIA78ENlgvmEylaB2o-wWTEiCots0fFDX20tqGsxFng_kCvvGHinVtwqSUlACDdxGHTmG7ayBgSfAyBZtHVROC9CG-kC1DJe8Jua4uSBQH"/>
+</div>
+<div class="absolute bottom-[20%] right-[4%] w-48 h-48 rounded-2xl glass-panel p-1 opacity-20 blur-[6px] avatar-float hidden lg:block" data-parallax="0.04" style="--rot: 20deg; animation-delay: 4.5s;">
+<img alt="Avatar 6" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdW4Bj8s631EnirMbwXNTDdmM9DDd8X3PtnSvvoNSwdVav3hyulnpXNxXuS9yAc5JYAuCyMe9WL9wwCm1qz3jmlZ3JO1EPoCV94pPaKvUcR9flObdQLMomkABLIy-IJAf0nw4x1GjpHpOPwkXW0vy1yJTcG6GUCC4red0Ps6DfZE0qt28PqzlmkjIyJ3YPLECm6G-PDDnsdrQDF_wrj12ELfAtZ-W1TWXRrhiJaWAg6Rw-fV9RniCjDv9HxCOCCZTnZKp0VLNul2o9"/>
+</div>
+<!-- Central Overlapping Background Avatars -->
+<div class="absolute top-[20%] left-1/2 -translate-x-1/2 w-40 h-40 rounded-2xl glass-panel p-1 opacity-10 blur-[8px] avatar-float" data-parallax="0.12" style="--rot: -15deg; animation-delay: 5s;">
+<img alt="Avatar 7" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDodeBhYxp0rdv643ojv31GCFRHfy448GTwXTUEZoVq-8uTKg0nTGrgQd6uITFeZJmg3-BZtvLOvnYMa-BRERXDOdFU64FoTacawwMMnJDVdSy6JNVopsroFa0Ewrm652DyXRMn3CneO01AK9kevnNnonSj74PTV5HyeoiX9Or0lOf2U9xYEzBVf5SGdrlnWfg9B1v5ZDH-jU9T6zy2xoEvE95gvAb6BsWnJWi0YQ4ciklrDzJiGeMS7uc-Pxkvb-JaJBrl5V_2qHqh"/>
+</div>
+<div class="absolute bottom-[25%] left-1/2 -translate-x-1/3 w-36 h-36 rounded-2xl glass-panel p-1 opacity-15 blur-[5px] avatar-float" data-parallax="0.07" style="--rot: 12deg; animation-delay: 1.5s;">
+<img alt="Avatar 8" class="w-full h-full object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxJwUlZ61Ncs7TOhHfy1UbUaQhmtEXBV6DBwzW1hR68lGGOWGQtl1Q_jR0wYlCD1XVnM9M7S4oSNlCeNZFXbihDJVJ-bhrzDbfZCvS4I08DQ11Tfajqi3LkRFkYHgzGXc6h8cEslHnM6yfBvGVPvpIOsJxUHMjwU7NvZ3do4x1XODU3ObxQlHdY82JAJ80p62z0OQD548BDhsRHEZpSE2-CaB_xmnWqRcskk2ADQSt6ORSa0DW_qpppVGnZ4az9rQe5ZqfaQHngux"/>
+</div>
+</div>
+<div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0); background-size: 40px 40px;"></div>
+</div>
+<!-- Text Content with Dark Overlay for Legibility -->
+<div class="container mx-auto px-6 relative z-10">
+<div class="max-w-4xl mx-auto text-center relative">
+<!-- Subtle gradient overlay behind text -->
+<div class="absolute inset-0 -inset-x-20 bg-background/60 blur-3xl -z-10 rounded-full scale-125"></div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-sm hero-reveal">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="text-xs font-label uppercase tracking-widest text-tertiary">Next-Gen AI Voice Lab</span>
+</div>
+<h1 class="text-6xl md:text-8xl lg:text-9xl font-headline font-bold leading-none tracking-tighter mb-8 drop-shadow-2xl hero-reveal hero-delay-1">
+                Create <span class="gradient-text">Realistic</span> <br/>AI Voices in Seconds
+            </h1>
+<p class="text-xl md:text-2xl text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed font-medium hero-reveal hero-delay-2">
+                Turn your text into natural-sounding speech using advanced AI models. Precision, emotion, and clarity at your fingertips.
+            </p>
+<div class="flex flex-wrap justify-center gap-6 hero-reveal hero-delay-3">
+<button class="px-10 py-5 bg-gradient-to-r from-primary-container to-secondary-container text-white font-bold rounded-2xl shadow-lg ethereal-glow hover:scale-105 active:scale-95 transition-all text-xl">
+                    Get Started Now
+                </button>
+<button class="px-10 py-5 glass-panel text-white font-bold rounded-2xl hover:bg-white/10 transition-all text-xl flex items-center gap-2">
+<span class="material-symbols-outlined text-2xl">play_circle</span>
+                    Watch Demo
+                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Demo Section -->
+<section class="py-24 container mx-auto px-6 reveal">
+<div class="glass-panel rounded-[2rem] p-8 md:p-12 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-tertiary/5 rounded-full blur-[80px]"></div>
+<div class="grid lg:grid-cols-3 gap-12 items-center">
+<div class="lg:col-span-2 space-y-6">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center shadow-lg">
+<span class="material-symbols-outlined text-white">edit_note</span>
+</div>
+<h2 class="text-3xl font-headline font-bold">Experience the Quality</h2>
+</div>
+<div class="relative group">
+<textarea class="w-full h-48 bg-surface-container-lowest border-none rounded-2xl p-6 text-on-surface focus:ring-2 focus:ring-primary/50 text-lg transition-all placeholder:text-slate-600" placeholder="Type something for Sophia to say...">Hello! I'm Sophia, one of the most advanced AI voice models. I can narrate your stories with deep emotional intelligence and crystalline clarity. Try me out by clicking the generate button.</textarea>
+<div class="absolute bottom-4 right-4 text-xs text-slate-500 font-label uppercase tracking-widest">
+                        Characters: 182 / 2000
+                    </div>
+</div>
+</div>
+<div class="space-y-8 lg:border-l border-white/5 lg:pl-12">
+<div>
+<label class="block text-xs font-label uppercase tracking-widest text-slate-400 mb-4">Selected Voice</label>
+<div class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-tertiary">
+                            <img class="w-full h-full object-cover voice-display-image" data-alt="portrait of a young woman with serene expression, warm sunset lighting and natural hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJjhwZdpZWnJwYBrBhGvJnPBUWg67T9H8B5fEF_gl22sSBrYDz52rk0qOkthD7dABHJLW2qHWOP87u4QOR-NIszJ3DUzx-XOpf_N7XkiBDG1AsXExvIlBTHLM0-ReCLO95GwXzycQSiaW-ETk-Rt_sch0HSeCXnpJRl_Y5DggrZEAOy-39N5RZH3by-o_WqxniDW--v8G-j5Und5yc678qV34Zdz1vHTjD4mRSKB8qfj48UMq_2e_oF2MKe_pHSxo60TsQ64CT8hCZ"/>
+                        </div>
+                        <div>
+                            <p class="font-bold text-white voice-display-name">Sophia</p>
+                            <p class="text-xs text-tertiary voice-display-type">Warm Female • Narrative</p>
+                        </div>
+                        <span class="material-symbols-outlined ml-auto text-slate-500">expand_more</span>
+                    </div>
+</div>
+<button class="w-full py-4 bg-primary text-on-primary font-bold rounded-xl flex items-center justify-center gap-3 hover:bg-primary-fixed-dim transition-colors group">
+<span class="material-symbols-outlined group-hover:rotate-12 transition-transform">bolt</span>
+                    Generate Speech
+                </button>
+<div class="flex items-center justify-between gap-4">
+<div class="flex-1 h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-0 group-hover:w-full transition-all duration-1000"></div>
+</div>
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI Model Gallery -->
+<section class="py-24 overflow-hidden">
+    <div class="container mx-auto px-6 mb-12 reveal">
+        <h2 class="text-4xl font-headline font-bold mb-2">Voice Library</h2>
+        <p class="text-slate-400">Discover over 100+ hyper-realistic personas for every use case.</p>
+        <p class="text-slate-300 mt-4 text-lg">Choose multiple voices from the same model across different versions. Each version offers unique vocal characteristics while maintaining consistent quality and tone.</p>
+    </div>
+    <div class="flex gap-6 overflow-x-auto pb-12 px-6 no-scrollbar">
+        <!-- Warm Female Category -->
+        <div class="min-w-[380px] voice-category group reveal-left stagger-1" data-category="warm-female">
+            <div class="glass-panel p-6 rounded-3xl hover:border-primary/50 transition-all duration-500 relative overflow-hidden cursor-pointer" onclick="toggleSubVoices(this)">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-tertiary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <img class="w-full h-full object-cover" data-alt="vibrant portrait of a woman smiling, bright studio lighting with cyan and magenta accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWTm9lFJG50PjrcXzPSGp0XcAZN9xE7uRezu4cM1WHHHaefMmYlxaYzC11YZPn0oTt523PKLu8Up8UZ1jc5ksf93mf5x2Vg3WrF2q5Mg68aUBB7IMMmvn665SKRMQxmHpGfFS9unKz1gZ4fqQIelp03Ku3yeHWplPQbZBqpdC0u1EzX-c7rEtEPV5CoOnII1mi5kPUXk32nr7NBoNQsxzrrEEvOcUm5EDcgB6xl-vjXXXU_sWds-yip3mqZCSOpVUmsZDtT576kM1y"/>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Warm Female</h3>
+                        <span class="inline-block px-2 py-0.5 rounded-md bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase tracking-widest mt-1">4 Sub Voices</span>
+                    </div>
+                    <span class="material-symbols-outlined ml-auto text-slate-400 group-hover:text-white transition-all expand-icon">expand_more</span>
+                </div>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">Perfect for audiobooks and meditation apps. Offers a calm, empathetic tone with subtle.</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex gap-1">
+                        <span class="w-1 h-4 bg-primary/40 rounded-full"></span>
+                        <span class="w-1 h-6 bg-primary rounded-full"></span>
+                        <span class="w-1 h-3 bg-primary/60 rounded-full"></span>
+                    </div>
+                    <button class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-white group-hover:bg-primary group-hover:text-on-primary transition-all">
+                        <span class="material-symbols-outlined">play_arrow</span>
+                    </button>
+                </div>
+                <!-- Sub Voices Dropdown -->
+                <div class="sub-voices hidden mt-6 pt-6 border-t border-white/10">
+                    <h4 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-widest">Sub Voices</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Sophia', 'Warm Female • Narrative')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJjhwZdpZWnJwYBrBhGvJnPBUWg67T9H8B5fEF_gl22sSBrYDz52rk0qOkthD7dABHJLW2qHWOP87u4QOR-NIszJ3DUzx-XOpf_N7XkiBDG1AsXExvIlBTHLM0-ReCLO95GwXzycQSiaW-ETk-Rt_sch0HSeCXnpJRl_Y5DggrZEAOy-39N5RZH3by-o_WqxniDW--v8G-j5Und5yc678qV34Zdz1vHTjD4mRSKB8qfj48UMq_2e_oF2MKe_pHSxo60TsQ64CT8hCZ"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Sophia</p>
+                                <p class="text-xs text-slate-400 truncate">Narrative, Calm</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Emma', 'Warm Female • Expressive')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWTm9lFJG50PjrcXzPSGp0XcAZN9xE7uRezu4cM1WHHHaefMmYlxaYzC11YZPn0oTt523PKLu8Up8UZ1jc5ksf93mf5x2Vg3WrF2q5Mg68aUBB7IMMmvn665SKRMQxmHpGfFS9unKz1gZ4fqQIelp03Ku3yeHWplPQbZBqpdC0u1EzX-c7rEtEPV5CoOnII1mi5kPUXk32nr7NBoNQsxzrrEEvOcUm5EDcgB6xl-vjXXXU_sWds-yip3mqZCSOpVUmsZDtT576kM1y"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Emma</p>
+                                <p class="text-xs text-slate-400 truncate">Expressive, Friendly</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Luna', 'Warm Female • Soft')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe2P7PO4ENUGBMeF4eby4WS7M3bYz8wWIdipejZvFKrfNS8W9unVEoR3emZcLAqMnsCY-ciKn2uhdwTFmtwZ_EZNyjENJab0owlZBZtBNmjqzG5n3d4oOhi7E3pG4kYkS5JCZVihjqd_Z0mt9it9tmZYhBZqo0YBItIvHIA78ENlgvmEylaB2o-wWTEiCots0fFDX20tqGsxFng_kCvvGHinVtwqSUlACDdxGHTmG7ayBgSfAyBZtHVROC9CG-kC1DJe8Jua4uSBQH"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Luna</p>
+                                <p class="text-xs text-slate-400 truncate">Soft, Gentle</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Aria', 'Warm Female • Melodic')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdW4Bj8s631EnirMbwXNTDdmM9DDd8X3PtnSvvoNSwdVav3hyulnpXNxXuS9yAc5JYAuCyMe9WL9wwCm1qz3jmlZ3JO1EPoCV94pPaKvUcR9flObdQLMomkABLIy-IJAf0nw4x1GjpHpOPwkXW0vy1yJTcG6GUCC4red0Ps6DfZE0qt28PqzlmkjIyJ3YPLECm6G-PDDnsdrQDF_wrj12ELfAtZ-W1TWXRrhiJaWAg6Rw-fV9RniCjDv9HxCOCCZTnZKp0VLNul2o9"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Aria</p>
+                                <p class="text-xs text-slate-400 truncate">Melodic, Rich</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Deep Baritone Category -->
+        <div class="min-w-[380px] voice-category group reveal-left stagger-2" data-category="deep-baritone">
+            <div class="glass-panel p-6 rounded-3xl hover:border-primary/50 transition-all duration-500 relative overflow-hidden cursor-pointer" onclick="toggleSubVoices(this)">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-tertiary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <img class="w-full h-full object-cover" data-alt="dramatic portrait of a man with serious expression, dark cinematic lighting and subtle warm highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe2P7PO4ENUGBMeF4eby4WS7M3bYz8wWIdipejZvFKrfNS8W9unVEoR3emZcLAqMnsCY-ciKn2uhdwTFmtwZ_EZNyjENJab0owlZBZtBNmjqzG5n3d4oOhi7E3pG4kYkS5JCZVihjqd_Z0mt9it9tmZYhBZqo0YBItIvHIA78ENlgvmEylaB2o-wWTEiCots0fFDX20tqGsxFng_kCvvGHinVtwqSUlACDdxGHTmG7ayBgSfAyBZtHVROC9CG-kC1DJe8Jua4uSBQH"/>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Deep Baritone</h3>
+                        <span class="inline-block px-2 py-0.5 rounded-md bg-secondary/10 text-secondary text-[10px] font-bold uppercase tracking-widest mt-1">4 Sub Voices</span>
+                    </div>
+                    <span class="material-symbols-outlined ml-auto text-slate-400 group-hover:text-white transition-all expand-icon">expand_more</span>
+                </div>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">Authoritative and cinematic. Ideal for movie trailers, documentaries.</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex gap-1">
+                        <span class="w-1 h-5 bg-secondary rounded-full"></span>
+                        <span class="w-1 h-3 bg-secondary/40 rounded-full"></span>
+                        <span class="w-1 h-7 bg-secondary/60 rounded-full"></span>
+                    </div>
+                    <button class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-white group-hover:bg-primary group-hover:text-on-primary transition-all">
+                        <span class="material-symbols-outlined">play_arrow</span>
+                    </button>
+                </div>
+                <!-- Sub Voices Dropdown -->
+                <div class="sub-voices hidden mt-6 pt-6 border-t border-white/10">
+                    <h4 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-widest">Sub Voices</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Marcus', 'Deep Baritone • Cinematic')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe2P7PO4ENUGBMeF4eby4WS7M3bYz8wWIdipejZvFKrfNS8W9unVEoR3emZcLAqMnsCY-ciKn2uhdwTFmtwZ_EZNyjENJab0owlZBZtBNmjqzG5n3d4oOhi7E3pG4kYkS5JCZVihjqd_Z0mt9it9tmZYhBZqo0YBItIvHIA78ENlgvmEylaB2o-wWTEiCots0fFDX20tqGsxFng_kCvvGHinVtwqSUlACDdxGHTmG7ayBgSfAyBZtHVROC9CG-kC1DJe8Jua4uSBQH"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Marcus</p>
+                                <p class="text-xs text-slate-400 truncate">Cinematic, Bold</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary hover:bg-secondary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Victor', 'Deep Baritone • Authoritative')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDodeBhYxp0rdv643ojv31GCFRHfy448GTwXTUEZoVq-8uTKg0nTGrgQd6uITFeZJmg3-BZtvLOvnYMa-BRERXDOdFU64FoTacawwMMnJDVdSy6JNVopsroFa0Ewrm652DyXRMn3CneO01AK9kevnNnonSj74PTV5HyeoiX9Or0lOf2U9xYEzBVf5SGdrlnWfg9B1v5ZDH-jU9T6zy2xoEvE95gvAb6BsWnJWi0YQ4ciklrDzJiGeMS7uc-Pxkvb-JaJBrl5V_2qHqh"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Victor</p>
+                                <p class="text-xs text-slate-400 truncate">Authoritative, Strong</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary hover:bg-secondary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'James', 'Deep Baritone • Smooth')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJjhwZdpZWnJwYBrBhGvJnPBUWg67T9H8B5fEF_gl22sSBrYDz52rk0qOkthD7dABHJLW2qHWOP87u4QOR-NIszJ3DUzx-XOpf_N7XkiBDG1AsXExvIlBTHLM0-ReCLO95GwXzycQSiaW-ETk-Rt_sch0HSeCXnpJRl_Y5DggrZEAOy-39N5RZH3by-o_WqxniDW--v8G-j5Und5yc678qV34Zdz1vHTjD4mRSKB8qfj48UMq_2e_oF2MKe_pHSxo60TsQ64CT8hCZ"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">James</p>
+                                <p class="text-xs text-slate-400 truncate">Smooth, Deep</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary hover:bg-secondary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Theo', 'Deep Baritone • Grave')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWTm9lFJG50PjrcXzPSGp0XcAZN9xE7uRezu4cM1WHHHaefMmYlxaYzC11YZPn0oTt523PKLu8Up8UZ1jc5ksf93mf5x2Vg3WrF2q5Mg68aUBB7IMMmvn665SKRMQxmHpGfFS9unKz1gZ4fqQIelp03Ku3yeHWplPQbZBqpdC0u1EzX-c7rEtEPV5CoOnII1mi5kPUXk32nr7NBoNQsxzrrEEvOcUm5EDcgB6xl-vjXXXU_sWds-yip3mqZCSOpVUmsZDtT576kM1y"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Theo</p>
+                                <p class="text-xs text-slate-400 truncate">Grave, Dramatic</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary hover:bg-secondary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Youthful Bright Category -->
+        <div class="min-w-[380px] voice-category group reveal-right stagger-3" data-category="youthful-bright">
+            <div class="glass-panel p-6 rounded-3xl hover:border-primary/50 transition-all duration-500 relative overflow-hidden cursor-pointer" onclick="toggleSubVoices(this)">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-tertiary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <img class="w-full h-full object-cover" data-alt="creative portrait of a woman with vibrant hair, futuristic neon lighting and soft bokeh background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdW4Bj8s631EnirMbwXNTDdmM9DDd8X3PtnSvvoNSwdVav3hyulnpXNxXuS9yAc5JYAuCyMe9WL9wwCm1qz3jmlZ3JO1EPoCV94pPaKvUcR9flObdQLMomkABLIy-IJAf0nw4x1GjpHpOPwkXW0vy1yJTcG6GUCC4red0Ps6DfZE0qt28PqzlmkjIyJ3YPLECm6G-PDDnsdrQDF_wrj12ELfAtZ-W1TWXRrhiJaWAg6Rw-fV9RniCjDv9HxCOCCZTnZKp0VLNul2o9"/>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Youthful Bright</h3>
+                        <span class="inline-block px-2 py-0.5 rounded-md bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase tracking-widest mt-1">4 Sub Voices</span>
+                    </div>
+                    <span class="material-symbols-outlined ml-auto text-slate-400 group-hover:text-white transition-all expand-icon">expand_more</span>
+                </div>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">Energetic and friendly. Best suited for YouTube content, e-learning, and social media ads.</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex gap-1">
+                        <span class="w-1 h-3 bg-tertiary/60 rounded-full"></span>
+                        <span class="w-1 h-5 bg-tertiary rounded-full"></span>
+                        <span class="w-1 h-4 bg-tertiary/40 rounded-full"></span>
+                    </div>
+                    <button class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-white group-hover:bg-primary group-hover:text-on-primary transition-all">
+                        <span class="material-symbols-outlined">play_arrow</span>
+                    </button>
+                </div>
+                <!-- Sub Voices Dropdown -->
+                <div class="sub-voices hidden mt-6 pt-6 border-t border-white/10">
+                    <h4 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-widest">Sub Voices</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Elena', 'Youthful Bright • Energetic')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdW4Bj8s631EnirMbwXNTDdmM9DDd8X3PtnSvvoNSwdVav3hyulnpXNxXuS9yAc5JYAuCyMe9WL9wwCm1qz3jmlZ3JO1EPoCV94pPaKvUcR9flObdQLMomkABLIy-IJAf0nw4x1GjpHpOPwkXW0vy1yJTcG6GUCC4red0Ps6DfZE0qt28PqzlmkjIyJ3YPLECm6G-PDDnsdrQDF_wrj12ELfAtZ-W1TWXRrhiJaWAg6Rw-fV9RniCjDv9HxCOCCZTnZKp0VLNul2o9"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Elena</p>
+                                <p class="text-xs text-slate-400 truncate">Energetic, Fun</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Zoe', 'Youthful Bright • Cheerful')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxJwUlZ61Ncs7TOhHfy1UbUaQhmtEXBV6DBwzW1hR68lGGOWGQtl1Q_jR0wYlCD1XVnM9M7S4oSNlCeNZFXbihDJVJ-bhrzDbfZCvS4I08DQ11Tfajqi3LkRFkYHgzGXc6h8cEslHnM6yfBvGVPvpIOsJxUHMjwU7NvZ3do4x1XODU3ObxQlHdY82JAJ80p62z0OQD548BDhsRHEZpSE2-CaB_xmnWqRcskk2ADQSt6ORSa0DW_qpppVGnZ4az9rQe5ZqfaQHngux"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Zoe</p>
+                                <p class="text-xs text-slate-400 truncate">Cheerful, Upbeat</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Ruby', 'Youthful Bright • Lively')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwndS5cZVb8ShO1EqRwr-RJ43hqkkq0FCWNLxp-4bl8xscvyy6pmgyl_JQtJRwg5XWCqOXSJiG9kONDulREED_m0FZb1U_zhen255-Ffum_LNoIMrSQfWoQ7vhR3YPbReAzsxJeNBA8r4AcbVnAGYkP65IUsPAeJCilU5JQXhEVZzx1IepRgPOqtdoQZC7E1otKdFmM-mxDs5IVl1Po38ytrymfTni41O5Gv7CtjLESoEn229oFTJ37_bOFno8le2q1lzw3iYPLP_6"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Ruby</p>
+                                <p class="text-xs text-slate-400 truncate">Lively, Animated</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Chloe', 'Youthful Bright • Approachable')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDodeBhYxp0rdv643ojv31GCFRHfy448GTwXTUEZoVq-8uTKg0nTGrgQd6uITFeZJmg3-BZtvLOvnYMa-BRERXDOdFU64FoTacawwMMnJDVdSy6JNVopsroFa0Ewrm652DyXRMn3CneO01AK9kevnNnonSj74PTV5HyeoiX9Or0lOf2U9xYEzBVf5SGdrlnWfg9B1v5ZDH-jU9T6zy2xoEvE95gvAb6BsWnJWi0YQ4ciklrDzJiGeMS7uc-Pxkvb-JaJBrl5V_2qHqh"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Chloe</p>
+                                <p class="text-xs text-slate-400 truncate">Approachable, Warm</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-tertiary/20 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Neutral Male Category -->
+        <div class="min-w-[380px] voice-category group reveal-right stagger-4" data-category="neutral-male">
+            <div class="glass-panel p-6 rounded-3xl hover:border-primary/50 transition-all duration-500 relative overflow-hidden cursor-pointer" onclick="toggleSubVoices(this)">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-tertiary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <img class="w-full h-full object-cover" data-alt="clean portrait of a young man, soft natural lighting and minimalist grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDodeBhYxp0rdv643ojv31GCFRHfy448GTwXTUEZoVq-8uTKg0nTGrgQd6uITFeZJmg3-BZtvLOvnYMa-BRERXDOdFU64FoTacawwMMnJDVdSy6JNVopsroFa0Ewrm652DyXRMn3CneO01AK9kevnNnonSj74PTV5HyeoiX9Or0lOf2U9xYEzBVf5SGdrlnWfg9B1v5ZDH-jU9T6zy2xoEvE95gvAb6BsWnJWi0YQ4ciklrDzJiGeMS7uc-Pxkvb-JaJBrl5V_2qHqh"/>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Neutral Male</h3>
+                        <span class="inline-block px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest mt-1">4 Sub Voices</span>
+                    </div>
+                    <span class="material-symbols-outlined ml-auto text-slate-400 group-hover:text-white transition-all expand-icon">expand_more</span>
+                </div>
+                <p class="text-sm text-slate-400 leading-relaxed mb-6">Clear and articulate. Professional choice for technical documentation and corporate training.</p>
+                <div class="flex items-center justify-between">
+                    <div class="flex gap-1">
+                        <span class="w-1 h-4 bg-primary/40 rounded-full"></span>
+                        <span class="w-1 h-7 bg-primary rounded-full"></span>
+                        <span class="w-1 h-2 bg-primary/60 rounded-full"></span>
+                    </div>
+                    <button class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-white group-hover:bg-primary group-hover:text-on-primary transition-all">
+                        <span class="material-symbols-outlined">play_arrow</span>
+                    </button>
+                </div>
+                <!-- Sub Voices Dropdown -->
+                <div class="sub-voices hidden mt-6 pt-6 border-t border-white/10">
+                    <h4 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-widest">Sub Voices</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Julian', 'Neutral Male • Professional')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDodeBhYxp0rdv643ojv31GCFRHfy448GTwXTUEZoVq-8uTKg0nTGrgQd6uITFeZJmg3-BZtvLOvnYMa-BRERXDOdFU64FoTacawwMMnJDVdSy6JNVopsroFa0Ewrm652DyXRMn3CneO01AK9kevnNnonSj74PTV5HyeoiX9Or0lOf2U9xYEzBVf5SGdrlnWfg9B1v5ZDH-jU9T6zy2xoEvE95gvAb6BsWnJWi0YQ4ciklrDzJiGeMS7uc-Pxkvb-JaJBrl5V_2qHqh"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Julian</p>
+                                <p class="text-xs text-slate-400 truncate">Professional, Clear</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Alex', 'Neutral Male • Friendly')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlxJwUlZ61Ncs7TOhHfy1UbUaQhmtEXBV6DBwzW1hR68lGGOWGQtl1Q_jR0wYlCD1XVnM9M7S4oSNlCeNZFXbihDJVJ-bhrzDbfZCvS4I08DQ11Tfajqi3LkRFkYHgzGXc6h8cEslHnM6yfBvGVPvpIOsJxUHMjwU7NvZ3do4x1XODU3ObxQlHdY82JAJ80p62z0OQD548BDhsRHEZpSE2-CaB_xmnWqRcskk2ADQSt6ORSa0DW_qpppVGnZ4az9rQe5ZqfaQHngux"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Alex</p>
+                                <p class="text-xs text-slate-400 truncate">Friendly, Casual</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Daniel', 'Neutral Male • Technical')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe2P7PO4ENUGBMeF4eby4WS7M3bYz8wWIdipejZvFKrfNS8W9unVEoR3emZcLAqMnsCY-ciKn2uhdwTFmtwZ_EZNyjENJab0owlZBZtBNmjqzG5n3d4oOhi7E3pG4kYkS5JCZVihjqd_Z0mt9it9tmZYhBZqo0YBItIvHIA78ENlgvmEylaB2o-wWTEiCots0fFDX20tqGsxFng_kCvvGHinVtwqSUlACDdxGHTmG7ayBgSfAyBZtHVROC9CG-kC1DJe8Jua4uSBQH"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Daniel</p>
+                                <p class="text-xs text-slate-400 truncate">Technical, Precise</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center gap-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition-all group" onclick="selectSubVoice(this, 'Ryan', 'Neutral Male • Conversational')">
+                            <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+                                <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJjhwZdpZWnJwYBrBhGvJnPBUWg67T9H8B5fEF_gl22sSBrYDz52rk0qOkthD7dABHJLW2qHWOP87u4QOR-NIszJ3DUzx-XOpf_N7XkiBDG1AsXExvIlBTHLM0-ReCLO95GwXzycQSiaW-ETk-Rt_sch0HSeCXnpJRl_Y5DggrZEAOy-39N5RZH3by-o_WqxniDW--v8G-j5Und5yc678qV34Zdz1vHTjD4mRSKB8qfj48UMq_2e_oF2MKe_pHSxo60TsQ64CT8hCZ"/>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold text-white">Ryan</p>
+                                <p class="text-xs text-slate-400 truncate">Conversational, Natural</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-slate-900 transition-all" onclick="event.stopPropagation()">
+                                <span class="material-symbols-outlined text-lg">play_arrow</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Features Section (Bento Grid) -->
+<section class="py-24 container mx-auto px-6">
+<div class="text-center mb-16 reveal">
+<h2 class="text-4xl font-headline font-bold mb-4">Precision Engineered Sound</h2>
+<p class="text-slate-400 max-w-2xl mx-auto">Our neural networks are trained on millions of hours of studio-quality recordings to deliver unparalleled realism.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="md:col-span-2 glass-panel p-8 rounded-[2rem] flex flex-col justify-between h-[300px] hover:translate-y-[-4px] transition-transform reveal stagger-1">
+<span class="material-symbols-outlined text-tertiary text-4xl">neurology</span>
+<div>
+<h3 class="text-2xl font-headline font-bold mb-2">Ultra Realistic Voices</h3>
+<p class="text-slate-400">Capture the subtle inflections, breaths, and emotional shifts that make speech sound truly human.</p>
+</div>
+</div>
+<div class="glass-panel p-8 rounded-[2rem] flex flex-col justify-between h-[300px] hover:translate-y-[-4px] transition-transform reveal stagger-2">
+<span class="material-symbols-outlined text-primary text-4xl">language</span>
+<div>
+<h3 class="text-xl font-headline font-bold mb-2">100+ Languages</h3>
+<p class="text-sm text-slate-400">Localized models for global reach with native-level accent accuracy.</p>
+</div>
+</div>
+<div class="glass-panel p-8 rounded-[2rem] flex flex-col justify-between h-[300px] hover:translate-y-[-4px] transition-transform reveal stagger-3">
+<span class="material-symbols-outlined text-secondary text-4xl">bolt</span>
+<div>
+<h3 class="text-xl font-headline font-bold mb-2">Fast Generation</h3>
+<p class="text-sm text-slate-400">Generate minutes of high-quality audio in just a few seconds.</p>
+</div>
+</div>
+<div class="glass-panel p-8 rounded-[2rem] flex flex-col justify-between h-[300px] md:col-span-1 hover:translate-y-[-4px] transition-transform reveal stagger-1">
+<span class="material-symbols-outlined text-white text-4xl">high_quality</span>
+<div>
+<h3 class="text-xl font-headline font-bold mb-2">Studio Quality</h3>
+<p class="text-sm text-slate-400">48kHz lossless audio output ready for professional use.</p>
+</div>
+</div>
+<div class="md:col-span-3 glass-panel p-8 rounded-[2rem] flex items-center gap-8 hover:translate-y-[-4px] transition-transform reveal stagger-2">
+<div class="hidden sm:block w-32 h-32 rounded-2xl bg-gradient-to-br from-primary/20 to-tertiary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-5xl text-white">waves</span>
+</div>
+<div>
+<h3 class="text-2xl font-headline font-bold mb-2">Dynamic Parameter Control</h3>
+<p class="text-slate-400">Fine-tune pitch, speed, and emphasis to match your specific narrative requirements with our intuitive Pro Lab interface.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="py-24 bg-surface-container-low/50">
+<div class="container mx-auto px-6">
+<div class="text-center mb-16 reveal">
+<h2 class="text-4xl font-headline font-bold mb-4">Choose Your Plan</h2>
+<p class="text-slate-400">Scalable solutions for individual creators and global enterprises.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+<!-- Free Plan -->
+<div class="glass-panel p-8 rounded-[2rem] flex flex-col border-none shadow-xl reveal stagger-1">
+<h3 class="text-xl font-bold mb-2">Free Plan</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-headline font-bold">$0</span>
+<span class="text-slate-500">/mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-center gap-3 text-sm text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                        100 Credits Monthly
+                    </li>
+<li class="flex items-center gap-3 text-sm text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                        Standard Voice Library
+                    </li>
+<li class="flex items-center gap-3 text-sm text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                        MP3 Export Only
+                    </li>
+</ul>
+<button class="w-full py-4 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-all">Get Started</button>
+</div>
+<!-- Pro Plan -->
+<div class="relative group reveal stagger-2">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-tertiary rounded-[2.1rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+<div class="relative glass-panel p-8 rounded-[2rem] flex flex-col border-2 border-primary/20 bg-slate-900/90 shadow-2xl h-full">
+<div class="absolute top-4 right-8 px-3 py-1 bg-primary text-on-primary text-[10px] font-bold rounded-full uppercase tracking-widest">Most Popular</div>
+<h3 class="text-xl font-bold mb-2">Pro Plan</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-headline font-bold">$29</span>
+<span class="text-slate-500">/mo</span>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-center gap-3 text-sm text-white">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+                            10,000 Credits Monthly
+                        </li>
+<li class="flex items-center gap-3 text-sm text-white">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+                            Premium Voice Library
+                        </li>
+<li class="flex items-center gap-3 text-sm text-white">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+                            Commercial Usage Rights
+                        </li>
+<li class="flex items-center gap-3 text-sm text-white">
+<span class="material-symbols-outlined text-tertiary text-lg">check_circle</span>
+                            Lossless WAV Exports
+                        </li>
+</ul>
+<button class="w-full py-4 rounded-xl bg-gradient-to-r from-primary-container to-secondary-container text-white font-bold shadow-lg hover:scale-105 transition-transform">Upgrade Now</button>
+</div>
+</div>
+<!-- Enterprise Plan -->
+<div class="glass-panel p-8 rounded-[2rem] flex flex-col border-none shadow-xl reveal stagger-3">
+<h3 class="text-xl font-bold mb-2">Enterprise</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-headline font-bold">Custom</span>
+</div>
+<ul class="space-y-4 mb-10 flex-grow">
+<li class="flex items-center gap-3 text-sm text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                        Unlimited Generations
+                    </li>
+<li class="flex items-center gap-3 text-sm text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                        Custom Voice Training
+                    </li>
+<li class="flex items-center gap-3 text-sm text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                        Dedicated API Support
+                    </li>
+<li class="flex items-center gap-3 text-sm text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                        Single Sign-On (SSO)
+                    </li>
+</ul>
+<button class="w-full py-4 rounded-xl border border-white/10 text-white font-bold hover:bg-white/5 transition-all">Contact Sales</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="py-12 border-t border-white/5 reveal">
+<div class="container mx-auto px-6">
+<div class="flex flex-col md:flex-row justify-between items-center gap-8">
+<div>
+<div class="text-xl font-bold tracking-tighter text-white font-headline mb-2">AI Voice Clone</div>
+<p class="text-sm text-slate-500">© 2024 AI Voice Lab. All rights reserved.</p>
+</div>
+<div class="flex gap-12">
+<div class="flex flex-col gap-2">
+<span class="text-xs font-label uppercase tracking-widest text-slate-300 mb-2">Product</span>
+<a class="text-sm text-slate-500 hover:text-white transition-colors" href="#">Features</a>
+<a class="text-sm text-slate-500 hover:text-white transition-colors" href="#">Pricing</a>
+<a class="text-sm text-slate-500 hover:text-white transition-colors" href="#">API</a>
+</div>
+<div class="flex flex-col gap-2">
+<span class="text-xs font-label uppercase tracking-widest text-slate-300 mb-2">Company</span>
+<a class="text-sm text-slate-500 hover:text-white transition-colors" href="#">About</a>
+<a class="text-sm text-slate-500 hover:text-white transition-colors" href="#">Blog</a>
+<a class="text-sm text-slate-500 hover:text-white transition-colors" href="#">Legal</a>
+</div>
+</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-slate-400 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">share</span>
+</a>
+<a class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-slate-400 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">groups</span>
+</a>
+<a class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-slate-400 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">rss_feed</span>
+</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+    // Toggle sub-voices dropdown
+    function toggleSubVoices(element) {
+        const subVoices = element.querySelector('.sub-voices');
+        const expandIcon = element.querySelector('.expand-icon');
+        
+        if (subVoices.classList.contains('hidden')) {
+            subVoices.classList.remove('hidden');
+            expandIcon.style.transform = 'rotate(180deg)';
+        } else {
+            subVoices.classList.add('hidden');
+            expandIcon.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    // Select sub-voice and update the demo section
+    function selectSubVoice(element, name, type) {
+        // Remove active class from all sub-voices
+        document.querySelectorAll('.sub-voices .flex').forEach(el => {
+            el.classList.remove('bg-primary/30', 'border-l-2', 'border-l-primary');
+        });
+        
+        // Add active class to selected
+        element.classList.add('bg-primary/30', 'border-l-2', 'border-l-primary');
+        
+        // Find the parent category to get the image
+        const categoryCard = element.closest('.voice-category');
+        const categoryImage = categoryCard.querySelector('img');
+        
+        // Update the demo section voice display
+        const voiceDisplay = document.querySelector('.voice-display-image');
+        const voiceName = document.querySelector('.voice-display-name');
+        const voiceType = document.querySelector('.voice-display-type');
+        
+        if (voiceDisplay) voiceDisplay.src = categoryImage.src;
+        if (voiceName) voiceName.textContent = name;
+        if (voiceType) voiceType.textContent = type;
+        
+        // Close all sub-voices dropdowns
+        document.querySelectorAll('.sub-voices').forEach(el => {
+            el.classList.add('hidden');
+        });
+        document.querySelectorAll('.expand-icon').forEach(el => {
+            el.style.transform = 'rotate(0deg)';
+        });
+    }
+
+    // Intersection Observer for scroll-triggered entrance animations
+    document.addEventListener('DOMContentLoaded', () => {
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-pop');
+        
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active-reveal');
+                    // Stop observing once revealed to maintain state
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        revealElements.forEach(el => observer.observe(el));
+
+        // Parallax effect for background avatars
+        const parallaxAvatars = document.querySelectorAll('[data-parallax]');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            parallaxAvatars.forEach(avatar => {
+                const speed = parseFloat(avatar.getAttribute('data-parallax'));
+                const yPos = -(scrolled * speed);
+                avatar.style.transform = `translateY(${yPos}px) rotate(var(--rot))`;
+            });
+        });
+    });
+</script>
+</body></html>
